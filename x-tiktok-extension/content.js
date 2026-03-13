@@ -196,17 +196,20 @@
 
     videoContainer.appendChild(v)
 
-    // Size the video to fill the container (which is position:absolute; inset:0)
+    // Bug #1 fix: position:absolute so the video fills the container exactly.
+    // position:relative inside a flex container caused the flex layout to shrink
+    // around the video's natural dimensions (e.g. 300x720) instead of the container
+    // filling the viewport → video rendered at top:-76, left:280 (confirmed live).
+    v.style.setProperty('position',   'absolute','important')
+    v.style.setProperty('top',        '0',       'important')
+    v.style.setProperty('left',       '0',       'important')
     v.style.setProperty('width',      '100%',    'important')
     v.style.setProperty('height',     '100%',    'important')
-    v.style.setProperty('max-width',  '100%',    'important')
-    v.style.setProperty('max-height', '100%',    'important')
     v.style.setProperty('object-fit', 'contain', 'important')
     v.style.setProperty('display',    'block',   'important')
     v.style.setProperty('cursor',     'pointer', 'important')
     v.style.setProperty('visibility', 'visible', 'important')
     v.style.setProperty('opacity',    '1',       'important')
-    v.style.setProperty('position',   'relative','important')
   }
 
   function restoreVideoToArticle(entry) {
@@ -214,8 +217,8 @@
     if (!v) return
 
     v.pause()
-    ;['width','height','max-width','max-height','object-fit','display',
-      'cursor','visibility','opacity','position'].forEach(p => v.style.removeProperty(p))
+    ;['position','top','left','width','height','object-fit','display',
+      'cursor','visibility','opacity'].forEach(p => v.style.removeProperty(p))
 
     if (entry.origParent && entry.origParent.isConnected) {
       entry.origParent.insertBefore(v, entry.origNext || null)
@@ -403,7 +406,7 @@
     }
 
     // ── Step 3: wait for MSE data ─────────────────────────
-    waitForVideoData(v, 2500).then(loaded => {
+    waitForVideoData(v, 300).then(loaded => {  // 300ms: fail fast; safePlay handles readyState=0 via canplay event
       if (!state.active || state.showToken !== token) return // superseded
       console.log(`[XTK] pre-warm done #${index}: loaded=${loaded} readyState=${v.readyState}`)
 
@@ -463,11 +466,18 @@
 
     setTimeout(() => {
       window.scrollTo({ top: savedY, behavior: 'instant' })
-      // Re-ensure video is still playing in case X.com briefly paused it
+      // Bug #4 fix: debounce the re-play to avoid racing with the initial play()
+      // that already fired. Without debounce, play()→scroll-back→play() sequence
+      // causes AbortError: "interrupted by new load" (confirmed 0ms gap in console).
       const cur = state.queue[state.currentIndex]
       if (cur && cur.videoEl.paused) {
-        console.log('[XTK] re-playing video after scroll-back')
-        safePlay(cur.videoEl)
+        clearTimeout(cur.videoEl._xtkScrollPlayTimer)
+        cur.videoEl._xtkScrollPlayTimer = setTimeout(() => {
+          if (cur.videoEl.paused) {
+            console.log('[XTK] re-playing video after scroll-back (debounced 250ms)')
+            safePlay(cur.videoEl)
+          }
+        }, 250)
       }
     }, 150)
 
@@ -481,7 +491,7 @@
     if (state.observer) return
     state.observer = new MutationObserver(() => {
       clearTimeout(state.harvestTimer)
-      state.harvestTimer = setTimeout(harvestVideos, 500)
+      state.harvestTimer = setTimeout(harvestVideos, 150)
     })
     const root = document.querySelector('[data-testid="primaryColumn"]')
       || document.querySelector('main')
