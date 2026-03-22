@@ -1,3 +1,4 @@
+import base64
 import os
 import subprocess
 import tempfile
@@ -7,6 +8,61 @@ from glob import glob as _glob
 def glob(pattern):
     """Thin wrapper so tests can patch it."""
     return _glob(pattern)
+
+
+MAX_AUDIO_BYTES = 25 * 1024 * 1024  # 25 MB
+MODEL = "claude-opus-4-6"
+
+
+def transcribe_audio(audio_path: str, client=None) -> str:
+    """Send audio file to Claude for transcription.
+
+    Returns plain-text transcript string.
+    Raises FileNotFoundError if audio_path doesn't exist.
+    Raises RuntimeError if file exceeds 25 MB.
+    """
+    import anthropic
+
+    if not os.path.exists(audio_path):
+        raise FileNotFoundError(f"Audio file not found: {audio_path}")
+
+    file_size = os.path.getsize(audio_path)
+    if file_size > MAX_AUDIO_BYTES:
+        raise RuntimeError(
+            f"Audio file ({file_size // (1024*1024)} MB) exceeds 25 MB Claude input limit"
+        )
+
+    if client is None:
+        client = anthropic.Anthropic()
+
+    with open(audio_path, "rb") as f:
+        audio_data = base64.standard_b64encode(f.read()).decode("utf-8")
+
+    response = client.messages.create(
+        model=MODEL,
+        max_tokens=4096,
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "document",
+                        "source": {
+                            "type": "base64",
+                            "media_type": "audio/mpeg",
+                            "data": audio_data,
+                        },
+                    },
+                    {
+                        "type": "text",
+                        "text": "Please transcribe all spoken words in this audio. Output only the transcript text with no commentary or formatting.",
+                    },
+                ],
+            }
+        ],
+    )
+
+    return response.content[0].text
 
 
 def download_instagram_video(url: str, output_dir: str | None = None) -> str:
