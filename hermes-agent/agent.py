@@ -2,9 +2,7 @@
 
 import anthropic
 
-from tools import download_instagram_video, extract_audio, transcribe_audio
-
-MODEL = "claude-opus-4-6"
+from tools import MODEL, download_instagram_video, extract_audio, transcribe_audio
 
 TOOLS = [
     {
@@ -42,13 +40,6 @@ TOOLS = [
     },
 ]
 
-_TOOL_IMPL = {
-    "download_instagram_video": lambda args: download_instagram_video(**args),
-    "extract_audio": lambda args: extract_audio(**args),
-    "transcribe_audio": lambda args: transcribe_audio(**args),
-}
-
-
 def run_agent(url: str, client=None) -> str:
     """Run the Claude agentic loop to transcribe an Instagram video.
 
@@ -57,6 +48,14 @@ def run_agent(url: str, client=None) -> str:
     """
     if client is None:
         client = anthropic.Anthropic()
+
+    # Build tool dispatch with the shared client so transcribe_audio
+    # uses the same (potentially injected) client as the agent loop.
+    tool_impl = {
+        "download_instagram_video": lambda args: download_instagram_video(**args),
+        "extract_audio": lambda args: extract_audio(**args),
+        "transcribe_audio": lambda args: transcribe_audio(client=client, **args),
+    }
 
     messages = [
         {
@@ -86,7 +85,7 @@ def run_agent(url: str, client=None) -> str:
             for block in response.content:
                 if block.type == "tool_use":
                     try:
-                        result = _TOOL_IMPL[block.name](block.input)
+                        result = tool_impl[block.name](block.input)
                         tool_results.append(
                             {
                                 "type": "tool_result",
@@ -103,7 +102,10 @@ def run_agent(url: str, client=None) -> str:
                                 "is_error": True,
                             }
                         )
-            if tool_results:
-                messages.append({"role": "user", "content": tool_results})
+            if not tool_results:
+                raise RuntimeError(
+                    "stop_reason was tool_use but no tool_use blocks found in response"
+                )
+            messages.append({"role": "user", "content": tool_results})
         else:
             raise RuntimeError(f"Unexpected stop_reason: {response.stop_reason!r}")
