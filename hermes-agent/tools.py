@@ -21,6 +21,7 @@ def download_instagram_video(url: str, output_dir: str | None = None) -> str:
         ["yt-dlp", "-o", f"{output_dir}/%(id)s.%(ext)s", url],
         capture_output=True,
         text=True,
+        timeout=300,
     )
 
     if result.returncode != 0:
