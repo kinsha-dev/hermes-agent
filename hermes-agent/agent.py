@@ -103,4 +103,7 @@ def run_agent(url: str, client=None) -> str:
                                 "is_error": True,
                             }
                         )
-            messages.append({"role": "user", "content": tool_results})
+            if tool_results:
+                messages.append({"role": "user", "content": tool_results})
+        else:
+            raise RuntimeError(f"Unexpected stop_reason: {response.stop_reason!r}")
