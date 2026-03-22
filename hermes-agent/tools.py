@@ -4,6 +4,8 @@ import subprocess
 import tempfile
 from glob import glob as _glob
 
+import anthropic as _anthropic
+
 
 def glob(pattern):
     """Thin wrapper so tests can patch it."""
@@ -21,8 +23,6 @@ def transcribe_audio(audio_path: str, client=None) -> str:
     Raises FileNotFoundError if audio_path doesn't exist.
     Raises RuntimeError if file exceeds 25 MB.
     """
-    import anthropic
-
     if not os.path.exists(audio_path):
         raise FileNotFoundError(f"Audio file not found: {audio_path}")
 
@@ -33,7 +33,7 @@ def transcribe_audio(audio_path: str, client=None) -> str:
         )
 
     if client is None:
-        client = anthropic.Anthropic()
+        client = _anthropic.Anthropic()
 
     with open(audio_path, "rb") as f:
         audio_data = base64.standard_b64encode(f.read()).decode("utf-8")
@@ -62,6 +62,8 @@ def transcribe_audio(audio_path: str, client=None) -> str:
         ],
     )
 
+    if not response.content or not hasattr(response.content[0], "text"):
+        raise RuntimeError("Unexpected response shape from Claude transcription API")
     return response.content[0].text
 
 
