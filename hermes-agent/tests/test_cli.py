@@ -1,15 +1,12 @@
-import sys
 import os
 import pytest
-from io import StringIO
 from unittest.mock import patch
-import importlib
 import importlib.util
 
 
 def _load_cli_mod():
     """Load __main__.py by file path to avoid resolving to pytest.__main__."""
-    main_path = os.path.join(os.path.dirname(__file__), "..", "__main__.py")
+    main_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "__main__.py"))
     spec = importlib.util.spec_from_file_location("hermes.__main__", main_path)
     cli_mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(cli_mod)
