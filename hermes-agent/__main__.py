@@ -1,6 +1,10 @@
 """CLI entry point: python __main__.py <instagram_url>"""
 
 import sys
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from agent import run_agent
 
 
