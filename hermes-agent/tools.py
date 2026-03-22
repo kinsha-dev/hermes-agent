@@ -1,3 +1,4 @@
+import os
 import subprocess
 import tempfile
 from glob import glob as _glob
@@ -32,3 +33,23 @@ def download_instagram_video(url: str, output_dir: str | None = None) -> str:
         raise RuntimeError("yt-dlp exited 0 but no video file found in output dir")
 
     return matches[0]
+
+
+def extract_audio(video_path: str) -> str:
+    """Extract audio from video file as mp3 using ffmpeg.
+
+    Returns the path to the .mp3 file.
+    Raises RuntimeError on failure.
+    """
+    audio_path = os.path.splitext(video_path)[0] + ".mp3"
+
+    result = subprocess.run(
+        ["ffmpeg", "-y", "-i", video_path, "-vn", "-acodec", "libmp3lame", "-q:a", "4", audio_path],
+        capture_output=True,
+        text=True,
+    )
+
+    if result.returncode != 0:
+        raise RuntimeError(f"ffmpeg failed: {result.stderr.strip()}")
+
+    return audio_path

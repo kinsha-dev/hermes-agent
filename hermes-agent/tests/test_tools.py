@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from tools import download_instagram_video
+from tools import download_instagram_video, extract_audio
 
 
 def test_download_returns_path_on_success(tmp_path):
@@ -39,3 +39,25 @@ def test_download_raises_when_no_file_produced(tmp_path):
                     "https://www.instagram.com/reel/abc123/",
                     output_dir=str(tmp_path),
                 )
+
+
+def test_extract_audio_returns_mp3_path(tmp_path):
+    fake_video = tmp_path / "video.mp4"
+    fake_video.write_bytes(b"fake")
+    expected_audio = str(tmp_path / "video.mp3")
+
+    with patch("tools.subprocess.run") as mock_run:
+        mock_run.return_value = MagicMock(returncode=0)
+        result = extract_audio(str(fake_video))
+
+    assert result == expected_audio
+
+
+def test_extract_audio_raises_on_ffmpeg_failure(tmp_path):
+    fake_video = tmp_path / "video.mp4"
+    fake_video.write_bytes(b"fake")
+
+    with patch("tools.subprocess.run") as mock_run:
+        mock_run.return_value = MagicMock(returncode=1, stderr="codec error")
+        with pytest.raises(RuntimeError, match="ffmpeg failed"):
+            extract_audio(str(fake_video))
