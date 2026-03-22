@@ -59,5 +59,5 @@ def test_extract_audio_raises_on_ffmpeg_failure(tmp_path):
 
     with patch("tools.subprocess.run") as mock_run:
         mock_run.return_value = MagicMock(returncode=1, stderr="codec error")
-        with pytest.raises(RuntimeError, match="ffmpeg failed"):
+        with pytest.raises(RuntimeError, match="ffmpeg failed.*codec error"):
             extract_audio(str(fake_video))

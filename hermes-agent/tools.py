@@ -47,6 +47,7 @@ def extract_audio(video_path: str) -> str:
         ["ffmpeg", "-y", "-i", video_path, "-vn", "-acodec", "libmp3lame", "-q:a", "4", audio_path],
         capture_output=True,
         text=True,
+        timeout=120,
     )
 
     if result.returncode != 0:
