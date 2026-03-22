@@ -68,28 +68,16 @@ def test_transcribe_audio_returns_text(tmp_path):
     audio_file = tmp_path / "audio.mp3"
     audio_file.write_bytes(b"fake audio bytes")
 
-    mock_client = MagicMock()
-    mock_client.messages.create.return_value = MagicMock(
-        content=[MagicMock(text="Hello world this is a transcript.")]
-    )
+    mock_model = MagicMock()
+    mock_model.transcribe.return_value = {"text": "  Hello world this is a transcript.  "}
 
-    result = transcribe_audio(str(audio_file), client=mock_client)
+    with patch("tools.whisper.load_model", return_value=mock_model):
+        result = transcribe_audio(str(audio_file))
 
     assert result == "Hello world this is a transcript."
-    mock_client.messages.create.assert_called_once()
+    mock_model.transcribe.assert_called_once_with(str(audio_file))
 
 
 def test_transcribe_audio_raises_when_file_missing():
-    mock_client = MagicMock()
     with pytest.raises(FileNotFoundError):
-        transcribe_audio("/nonexistent/audio.mp3", client=mock_client)
-
-
-def test_transcribe_audio_raises_on_file_too_large(tmp_path):
-    audio_file = tmp_path / "big.mp3"
-    # Write a file larger than 25 MB limit
-    audio_file.write_bytes(b"x" * (26 * 1024 * 1024))
-
-    mock_client = MagicMock()
-    with pytest.raises(RuntimeError, match="exceeds 25 MB"):
-        transcribe_audio(str(audio_file), client=mock_client)
+        transcribe_audio("/nonexistent/audio.mp3")

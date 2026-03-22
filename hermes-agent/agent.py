@@ -54,7 +54,7 @@ def run_agent(url: str, client=None) -> str:
     tool_impl = {
         "download_instagram_video": lambda args: download_instagram_video(**args),
         "extract_audio": lambda args: extract_audio(**args),
-        "transcribe_audio": lambda args: transcribe_audio(client=client, **args),
+        "transcribe_audio": lambda args: transcribe_audio(**args),
     }
 
     messages = [

@@ -52,7 +52,7 @@ def test_run_agent_completes_tool_loop():
 
     mock_dl.assert_called_once_with(url="https://www.instagram.com/reel/abc/")
     mock_ex.assert_called_once_with(video_path="/tmp/video.mp4")
-    mock_tr.assert_called_once_with(client=mock_client, audio_path="/tmp/video.mp3")
+    mock_tr.assert_called_once_with(audio_path="/tmp/video.mp3")
     assert result == "Hello world this is a transcript."
     assert mock_client.messages.create.call_count == 4
 
