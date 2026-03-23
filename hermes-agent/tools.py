@@ -23,7 +23,7 @@ def transcribe_audio(audio_path: str) -> str:
     if not os.path.exists(audio_path):
         raise FileNotFoundError(f"Audio file not found: {audio_path}")
 
-    model = whisper.load_model("base")
+    model = whisper.load_model("large")
     result = model.transcribe(audio_path)
     return result["text"].strip()
 
