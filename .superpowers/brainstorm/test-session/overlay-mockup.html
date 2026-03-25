@@ -1,0 +1,113 @@
+<h2>X Video TikTok Overlay — UI Design</h2>
+<p class="subtitle">This is what you'll see when you navigate to x.com/i/videos</p>
+
+<div class="mockup">
+  <div class="mockup-header">Full-screen overlay (covers entire browser window)</div>
+  <div class="mockup-body" style="background:#000;min-height:480px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:0 0 6px 6px">
+
+    <!-- Video area -->
+    <div style="width:280px;height:380px;background:#111;border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative">
+      <span style="color:#fff;font-size:48px;opacity:0.5">▶</span>
+      <!-- Progress bar -->
+      <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,0.2)">
+        <div style="width:35%;height:100%;background:#fff"></div>
+      </div>
+    </div>
+
+    <!-- Top bar -->
+    <div style="position:absolute;top:0;left:0;right:0;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(to bottom,rgba(0,0,0,0.7),transparent)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:28px;height:28px;border-radius:50%;background:#1d9bf0;display:flex;align-items:center;justify-content:center">
+          <span style="color:#fff;font-size:12px">𝕏</span>
+        </div>
+        <span style="color:#fff;font-size:13px;font-weight:600">X Videos</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="color:rgba(255,255,255,0.5);font-size:11px">4 / 18</span>
+        <div style="background:rgba(255,255,255,0.12);border-radius:4px;padding:3px 8px">
+          <span style="color:rgba(255,255,255,0.7);font-size:11px">Esc to exit</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom metadata -->
+    <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;background:linear-gradient(to top,rgba(0,0,0,0.85),transparent)">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+        <div style="width:32px;height:32px;border-radius:50%;background:#444"></div>
+        <div>
+          <div style="color:#fff;font-size:13px;font-weight:600">@elonmusk</div>
+          <div style="color:rgba(255,255,255,0.5);font-size:11px">Elon Musk</div>
+        </div>
+        <div style="margin-left:auto;background:#1d9bf0;border-radius:20px;padding:4px 12px">
+          <span style="color:#fff;font-size:11px">Follow</span>
+        </div>
+      </div>
+      <div style="color:rgba(255,255,255,0.8);font-size:12px;margin-bottom:10px;line-height:1.4">This is the future of energy. Incredible engineering.</div>
+      <div style="display:flex;gap:20px">
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="color:rgba(255,255,255,0.6);font-size:14px">♥</span>
+          <span style="color:rgba(255,255,255,0.7);font-size:11px">42.1K</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="color:rgba(255,255,255,0.6);font-size:14px">↻</span>
+          <span style="color:rgba(255,255,255,0.7);font-size:11px">8.3K</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="color:rgba(255,255,255,0.6);font-size:14px">💬</span>
+          <span style="color:rgba(255,255,255,0.7);font-size:11px">1.2K</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="color:rgba(255,255,255,0.6);font-size:14px">👁</span>
+          <span style="color:rgba(255,255,255,0.7);font-size:11px">2.1M</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav hints (right side) -->
+    <div style="position:absolute;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px;align-items:center">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div style="width:36px;height:36px;background:rgba(255,255,255,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+          <span style="color:#fff;font-size:14px">↑</span>
+        </div>
+        <span style="color:rgba(255,255,255,0.4);font-size:9px">prev</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div style="width:36px;height:36px;background:rgba(255,255,255,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+          <span style="color:#fff;font-size:14px">↓</span>
+        </div>
+        <span style="color:rgba(255,255,255,0.4);font-size:9px">next</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section" style="margin-top:24px">
+  <h3>Navigation controls</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px">
+    <div style="padding:12px;background:rgba(255,255,255,0.04);border-radius:6px;border:1px solid rgba(255,255,255,0.08)">
+      <div class="label">Keyboard</div>
+      <div style="margin-top:6px;display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;justify-content:space-between"><code>↓ / ↑</code><span style="color:#888;font-size:12px">next / prev video</span></div>
+        <div style="display:flex;justify-content:space-between"><code>Space</code><span style="color:#888;font-size:12px">play / pause</span></div>
+        <div style="display:flex;justify-content:space-between"><code>Esc</code><span style="color:#888;font-size:12px">exit overlay</span></div>
+        <div style="display:flex;justify-content:space-between"><code>M</code><span style="color:#888;font-size:12px">mute / unmute</span></div>
+      </div>
+    </div>
+    <div style="padding:12px;background:rgba(255,255,255,0.04);border-radius:6px;border:1px solid rgba(255,255,255,0.08)">
+      <div class="label">Trackpad / Mouse</div>
+      <div style="margin-top:6px;display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;justify-content:space-between"><code>Scroll ↓</code><span style="color:#888;font-size:12px">next video</span></div>
+        <div style="display:flex;justify-content:space-between"><code>Scroll ↑</code><span style="color:#888;font-size:12px">prev video</span></div>
+        <div style="display:flex;justify-content:space-between"><code>Click video</code><span style="color:#888;font-size:12px">play / pause</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:16px;padding:14px;background:rgba(29,155,240,0.06);border-radius:8px;border-left:3px solid #1d9bf0">
+  <div class="label">How it loads more videos</div>
+  <p style="margin-top:6px;font-size:13px">The overlay runs on top of the live X.com feed. When you reach the last 2 queued videos, the extension programmatically scrolls the hidden X.com page behind the overlay — X loads the next batch, the MutationObserver picks them up, and they're silently added to the queue. Seamless.</p>
+</div>
+
+<p class="subtitle" style="margin-top:24px">Does this look right? Any changes?</p>
