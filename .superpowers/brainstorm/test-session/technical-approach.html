@@ -1,0 +1,47 @@
+<h2>How should the extension get the videos?</h2>
+<p class="subtitle">All three produce the same full-screen TikTok UI — this is about how we grab the video content</p>
+
+<div class="options">
+
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>DOM Scraper <span style="font-size:11px;color:#1d9bf0;margin-left:6px">Recommended</span></h3>
+      <p>Content script watches X.com's DOM with <code>MutationObserver</code>. When video elements appear in the feed, the extension grabs their <code>&lt;video&gt;</code> src URLs and surrounding tweet metadata (author, likes, text). Builds the overlay from those.</p>
+      <div class="pros-cons" style="margin-top:8px">
+        <div class="pros"><h4>Pros</h4><ul><li>No API key needed</li><li>Works with your login</li><li>Simple to implement</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Breaks if X.com rewrites their DOM</li><li>Needs X.com to pre-load videos in DOM</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Network Interceptor</h3>
+      <p>Service worker intercepts X.com's internal API calls (<code>api.twitter.com/graphql/VideoTimeline</code>). Parses the JSON responses to get structured video data before it hits the DOM. More reliable data, but requires reverse-engineering X.com's private API.</p>
+      <div class="pros-cons" style="margin-top:8px">
+        <div class="pros"><h4>Pros</h4><ul><li>Structured data, not fragile HTML</li><li>Gets data before DOM renders</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Fragile to API schema changes</li><li>Complex to decode GraphQL responses</li><li>Potential ToS concerns</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Scroll Hijack + Iframe</h3>
+      <p>Overlay opens full-screen. Inside it, renders the actual X.com /i/videos page in a hidden iframe (or side panel). Extension then reads the iframe DOM and extracts the currently-playing video. Sidesteps needing to parse anything custom.</p>
+      <div class="pros-cons" style="margin-top:8px">
+        <div class="pros"><h4>Pros</h4><ul><li>Doesn't need to parse X internals</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>X.com blocks iframes (X-Frame-Options)</li><li>Cross-origin restrictions</li><li>Very fragile</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top:24px;padding:16px;background:rgba(29,155,240,0.08);border-radius:8px;border-left:3px solid #1d9bf0">
+  <p class="label">My recommendation</p>
+  <p style="margin-top:4px"><strong>Approach A</strong> is the right call. X.com's video feed on <code>/i/videos</code> pre-loads video elements in the DOM before playing them. A MutationObserver on <code>&lt;video&gt;</code> elements is reliable, requires no external auth, and is fast to build. The main risk (X.com DOM changes) is manageable — the extension just needs to be updated when X changes their markup.</p>
+</div>

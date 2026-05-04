@@ -1,0 +1,22 @@
+{
+  "phone_number": "+917736492801",
+  "callmebot_api_key": "",
+  "callmebot_enabled": false,
+  "was_cli_enabled": true,
+  "was_cli_paths": [
+    "was",
+    "/usr/local/bin/was",
+    "~/.npm-global/bin/was",
+    "/opt/homebrew/bin/was"
+  ],
+  "signal_threshold": 60,
+  "angle_threshold": 30,
+  "chart_url": "https://www.tradingview.com/chart/vWJrWPZ1/?symbol=SP%3ASPX",
+  "timeframe": "30m",
+  "trading_hours_only": true,
+  "cooldown_minutes": 45,
+  "last_signal": {
+    "direction": null,
+    "timestamp": null
+  }
+}

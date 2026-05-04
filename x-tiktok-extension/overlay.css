@@ -1,0 +1,275 @@
+/* =========================================================
+   X TikTok Feed — Overlay Styles
+   ========================================================= */
+
+#xtk-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: #000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#xtk-overlay.active {
+  display: flex;
+}
+
+/* Pre-warm phase: overlay is "active" (display:flex so JS geometry works) but
+   invisible so X.com's IntersectionObserver (rooted at primaryColumn) still
+   sees articles in the viewport. Once MSE data is buffered, .pre-init is
+   removed and the video appears instantly with data already loaded. */
+#xtk-overlay.pre-init {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ── Video container ────────────────────────────────────── */
+/* We move X.com's actual <video> node in here — no custom
+   video element. Styles on the video itself are set inline
+   via JS (with !important) so X.com's styles don't win.   */
+
+#xtk-video-container {
+  /* Fill the full overlay so that the moved videoComponent's
+     width:100%; height:100% resolve to the full viewport size,
+     not to 0 (auto-sized container with no explicit dimensions). */
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ── Top bar ────────────────────────────────────────────── */
+
+#xtk-top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+#xtk-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+#xtk-logo-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #1d9bf0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+#xtk-counter {
+  color: rgba(255,255,255,0.55);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+#xtk-esc-hint {
+  background: rgba(255,255,255,0.12);
+  border-radius: 5px;
+  padding: 4px 10px;
+  color: rgba(255,255,255,0.6);
+  font-size: 11px;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+#xtk-esc-hint:hover {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+/* ── Nav buttons ────────────────────────────────────────── */
+
+#xtk-nav {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.xtk-nav-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 16px;
+  transition: background 0.15s;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.xtk-nav-btn:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+.xtk-nav-btn:active {
+  background: rgba(255,255,255,0.35);
+  transform: scale(0.92);
+}
+
+.xtk-nav-label {
+  color: rgba(255,255,255,0.35);
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ── Bottom metadata ────────────────────────────────────── */
+
+#xtk-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 20px 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+#xtk-author-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+#xtk-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #444;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+#xtk-author-info {
+  flex: 1;
+  min-width: 0;
+}
+
+#xtk-handle {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#xtk-name {
+  color: rgba(255,255,255,0.5);
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#xtk-text {
+  color: rgba(255,255,255,0.85);
+  font-size: 13px;
+  line-height: 1.45;
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+#xtk-stats {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.xtk-stat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(255,255,255,0.65);
+  font-size: 12px;
+}
+
+.xtk-stat-icon {
+  font-size: 14px;
+}
+
+/* ── Loading state ──────────────────────────────────────── */
+
+#xtk-loading {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#xtk-overlay.loading #xtk-loading {
+  display: flex;
+}
+
+#xtk-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(255,255,255,0.15);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: xtk-spin 0.8s linear infinite;
+}
+
+#xtk-loading-text {
+  color: rgba(255,255,255,0.5);
+  font-size: 13px;
+}
+
+@keyframes xtk-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Transition ─────────────────────────────────────────── */
+
+#xtk-video-container video {
+  transition: opacity 0.15s ease;
+}
+
+#xtk-video-container.fading video {
+  opacity: 0;
+}
