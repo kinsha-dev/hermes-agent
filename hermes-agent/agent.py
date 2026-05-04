@@ -1,7 +1,15 @@
-"""Hermes Agent — Claude tool-use agentic loop for Instagram video transcription."""
+"""Hermes Agent — agentic loop for Instagram video transcription.
+
+LLM backend is selected via the LLM_BACKEND env var:
+  - "anthropic" (default): uses Claude with native tool_use
+  - "lmstudio": uses LM Studio / Gemma via text-based JSON tool calls
+"""
+
+import os
 
 import anthropic
 
+from lmstudio import LMStudioClient, run_agent_lmstudio
 from tools import MODEL, download_instagram_video, extract_audio, transcribe_audio
 
 TOOLS = [
@@ -41,21 +49,25 @@ TOOLS = [
 ]
 
 def run_agent(url: str, client=None) -> str:
-    """Run the Claude agentic loop to transcribe an Instagram video.
+    """Run the agentic loop to transcribe an Instagram video.
 
-    Claude decides which tools to call and in what order.
-    Returns the final plain-text transcript from Claude.
+    Backend is selected by the LLM_BACKEND env var ("anthropic" or "lmstudio").
+    Returns the final plain-text transcript.
     """
-    if client is None:
-        client = anthropic.Anthropic()
+    backend = os.getenv("LLM_BACKEND", "anthropic").lower()
 
-    # Build tool dispatch with the shared client so transcribe_audio
-    # uses the same (potentially injected) client as the agent loop.
     tool_impl = {
         "download_instagram_video": lambda args: download_instagram_video(**args),
         "extract_audio": lambda args: extract_audio(**args),
         "transcribe_audio": lambda args: transcribe_audio(**args),
     }
+
+    if backend == "lmstudio":
+        lm_client = client if isinstance(client, LMStudioClient) else LMStudioClient()
+        return run_agent_lmstudio(url, tool_impl, client=lm_client)
+
+    if client is None:
+        client = anthropic.Anthropic()
 
     messages = [
         {
